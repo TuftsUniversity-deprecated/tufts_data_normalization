@@ -1,5 +1,6 @@
 require "tufts_data_normalization/version"
 
 module TuftsDataNormalization
-  # Your code goes here...
+  require 'tufts_data_normalization/railtie' if defined?(Rails)
+  
 end

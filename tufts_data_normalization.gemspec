@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Mike Korcynski"]
   spec.email         = ["mkorcy@gmail.com"]
   spec.description   = "A Gem with tasks for normalizing Tufts Fedora Repository Objects"
-  s.summary          = "Tufts Data Normalization"
+  spec.summary          = "Tufts Data Normalization"
   spec.homepage      = ""
 
   spec.files         = `git ls-files`.split($/)

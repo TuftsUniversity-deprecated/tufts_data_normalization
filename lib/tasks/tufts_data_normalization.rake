@@ -26,19 +26,20 @@ namespace :tufts_data do
       end
 
       ds_opts = {:label => 'Administrative Metadata'}
-      #new_dca_admin = DcaAdmin.new nil, "DCA-ADMIN" #DcaAdmin.new(:dsid => 'DCA-ADMIN', :label => 'Administrative Metadata')
       new_dca_admin = election_record.create_datastream DcaAdmin, 'DCA-ADMIN', ds_opts
+      new_dca_admin.ng_xml = DcaAdmin.xml_template
+      new_dca_admin.steward = "dca"
+      new_dca_admin.displays = ["dl","elections"]
+      new_dca_admin.createdby = "nnv"
+
       if election_record.datastreams['DCA-ADMIN'].nil?
         election_record.add_datastream new_dca_admin
       else
         election_record.datastreams['DCA-ADMIN'] = new_dca_admin
       end
-      new_dca_admin.steward = "dca"
-      new_dca_admin.displays = ["dl","elections"]
-      new_dca_admin.createdby = "nnv"
 
       election_record.save!
-
+      puts "#{pid} successfully migrated"
     end 
   end
 end

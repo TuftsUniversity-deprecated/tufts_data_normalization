@@ -13,33 +13,38 @@ namespace :tufts_data do
 
     CSV.foreach(args[:arg1], encoding: "ISO8859-1") do |row|
       pid = row[0]
-      puts "Attempting to migrate object: #{pid}"
       begin
         election_record = TuftsBase.find(pid)
       rescue ActiveFedora::ObjectNotFoundError
-        puts "Could not locate object: #{pid}"
+        puts "ERROR Could not locate object: #{pid}"
         next
       end
       if election_record.kind_of?(Array)
-        puts "Multiple results for: #{pid}"
+        puts "ERROR Multiple results for: #{pid}"
         next
       end
 
-      ds_opts = {:label => 'Administrative Metadata'}
-      new_dca_admin = election_record.create_datastream DcaAdmin, 'DCA-ADMIN', ds_opts
-      new_dca_admin.ng_xml = DcaAdmin.xml_template
-      new_dca_admin.steward = "dca"
-      new_dca_admin.displays = ["dl","elections"]
-      new_dca_admin.createdby = "nnv"
+      begin
+        ds_opts = {:label => 'Administrative Metadata'}
+        new_dca_admin = election_record.create_datastream DcaAdmin, 'DCA-ADMIN', ds_opts
+        new_dca_admin.ng_xml = DcaAdmin.xml_template
+        new_dca_admin.steward = "dca"
+        new_dca_admin.displays = ["dl","elections"]
+        new_dca_admin.createdby = "nnv"
 
-      if election_record.datastreams['DCA-ADMIN'].nil?
-        election_record.add_datastream new_dca_admin
-      else
-        election_record.datastreams['DCA-ADMIN'] = new_dca_admin
+        if election_record.datastreams['DCA-ADMIN'].nil?
+          election_record.add_datastream new_dca_admin
+        else
+          election_record.datastreams['DCA-ADMIN'] = new_dca_admin
+        end
+
+        election_record.save!
+        #puts "#{pid} successfully migrated"
+      rescue => exception
+        puts "ERROR There was an error doing the conversion for: #{pid}"
+        puts exception.backtrace
+        next
       end
-
-      election_record.save!
-      puts "#{pid} successfully migrated"
     end 
   end
 end

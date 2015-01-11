@@ -5,7 +5,9 @@ module TuftsDataNormalization
     railtie_name :tufts_data_normalization
 
     rake_tasks do
-      load "tasks/tufts_data_normalization.rake"
+      load "tasks/aah_data_normalization.rake"
+      load "tasks/elections_data_normalization.rake"
+
     end
   end
 end

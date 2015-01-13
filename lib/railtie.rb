@@ -7,7 +7,7 @@ module TuftsDataNormalization
     rake_tasks do
       load "tasks/aah_data_normalization.rake"
       load "tasks/elections_data_normalization.rake"
-
+      load "tasks/perseus_data_normalization.rake"
     end
   end
 end

@@ -28,10 +28,23 @@ namespace :tufts_data do
       begin
   	 ds_opts = {:label => 'Descriptive Metadata'}
          new_dca_meta = perseus_record.create_datastream TuftsDcaMeta, 'DCA-META', ds_opts
-         perseus_dca_meta = perseus_record.create_datastream TuftsDcaMeta, 'PERSEUS-META', ds_opts
-         perseus_dca_meta.ng_xml = << perseus_record.datastreams['DCA-META'].ng_xml
 	 new_dca_meta.ng_xml = TuftsDcaMeta.xml_template
+
+         detail_opts = {:label => 'Detailed Descriptive Metadata'}
+         dc_detail_meta = perseus_record.create_datastream TuftsDcDetailed, 'DC-DETAIL-META', detail_opts
+         dc_detail_meta.ng_xml = TuftsDcDetailed.xml_template
+
+	 new_dca_meta.content =  perseus_record.datastreams['PERSEUS-META'].content
+
          old_dca_meta = perseus_record.datastreams['DCA-META']
+
+         #remap the isPartOf Data
+         doc = Nokogiri(old_dca_meta.content)
+         doc.elements.children.each { |n| 
+           dc_detail_meta.isPartOf = n.text if n.name == 'isPartOf'
+         }
+         #data mapping
+
          new_dca_meta.title = perseus_record.title
          new_dca_meta.creator = old_dca_meta.creator
          new_dca_meta.source = old_dca_meta.source
@@ -62,9 +75,9 @@ namespace :tufts_data do
            perseus_record.add_datastream new_dca_meta
          else
            perseus_record.datastreams['DCA-META'] = new_dca_meta
-           perseus_record.add_datastream perseus_dca_meta
-#           perseus_recordstreams['PERSEUS-META'] = old_dca_meta
+           perseus_record.add_datastream dc_detail_meta
          end
+#         perseus_record.datastreams['DCA-META'].content = perseus_record.datastreams['PERSEUS-META'].content
 
          ds_opts = {:label => 'Administrative Metadata'}
 
@@ -77,12 +90,13 @@ namespace :tufts_data do
          else
            perseus_record.datastreams['DCA-ADMIN'] = new_dca_admin
          end
+
          perseus_record.save!
 
       rescue => ex
         puts "ERROR There was an error doing the conversion for: #{pid}"
- puts ex.message
-  puts ex.backtrace.join("\n")
+        puts ex.message
+        puts ex.backtrace.join("\n")
         next
       end
     end 

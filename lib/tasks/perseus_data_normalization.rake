@@ -34,8 +34,6 @@ namespace :tufts_data do
          dc_detail_meta = perseus_record.create_datastream TuftsDcDetailed, 'DC-DETAIL-META', detail_opts
          dc_detail_meta.ng_xml = TuftsDcDetailed.xml_template
 
-	 new_dca_meta.content =  perseus_record.datastreams['PERSEUS-META'].content
-
          old_dca_meta = perseus_record.datastreams['DCA-META']
 
          #remap the isPartOf Data
@@ -75,7 +73,7 @@ namespace :tufts_data do
            perseus_record.add_datastream new_dca_meta
          else
            perseus_record.datastreams['DCA-META'] = new_dca_meta
-           perseus_record.add_datastream dc_detail_meta
+           perseus_record.add_datastream dc_detail_meta if perseus_record.datastreams['DC-DETAIL-META'].nil?
          end
 #         perseus_record.datastreams['DCA-META'].content = perseus_record.datastreams['PERSEUS-META'].content
 

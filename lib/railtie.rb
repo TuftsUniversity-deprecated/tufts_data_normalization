@@ -10,7 +10,11 @@ module TuftsDataNormalization
       load "tasks/election_images_data_normalization.rake"
       load "tasks/perseus_data_normalization.rake"
       load "tasks/generic_dca_wo_created_by_normalization.rake"
+      load "tasks/generic_dca_wo_created_by_wo_steward_normalization.rake"
       load "tasks/generic_dca_dl_normalization.rake"
+      load "tasks/generic_dca_dl_with_embargo_normalization.rake"
+      load "tasks/sample_object_normalization.rake"
+      load "tasks/tisch_data_migration.rake"
     end
   end
 end

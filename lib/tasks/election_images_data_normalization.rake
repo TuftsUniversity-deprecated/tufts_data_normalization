@@ -10,8 +10,9 @@ namespace :tufts_data do
       puts "Usage: rake tufts_data:fix_election_records['/home/hydradm/path_to/list_of_pids.txt']"
       next
     end
-
+    SLEEP_TIME=1.0/2.0
     CSV.foreach(args[:arg1], encoding: "ISO8859-1") do |row|
+     sleep(SLEEP_TIME)
       pid = row[0]
       begin
         election_record = TuftsBase.find(pid)

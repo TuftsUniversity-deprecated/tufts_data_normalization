@@ -9,8 +9,9 @@ namespace :tufts_data do
       puts "YOU MUST SPECIFY FULL PATH TO FILE, ABORTING!"
       next
     end
-
+    SLEEP_TIME=1.0/2.0
     CSV.foreach(args[:arg1], encoding: "ISO8859-1") do |row|
+    sleep(SLEEP_TIME)
       pid = row[0]
       begin
         aah_record = TuftsBase.find(pid)

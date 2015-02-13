@@ -15,6 +15,8 @@ module TuftsDataNormalization
       load "tasks/generic_dca_dl_with_embargo_normalization.rake"
       load "tasks/sample_object_normalization.rake"
       load "tasks/tisch_data_migration.rake"
+      load "tasks/election_record_xml_export.rake"
+      load "tasks/verify_dca_admin.rake"
     end
   end
 end

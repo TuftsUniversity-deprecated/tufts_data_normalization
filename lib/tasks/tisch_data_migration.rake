@@ -53,7 +53,7 @@ namespace :tufts_data do
           aah_record.datastreams['DCA-ADMIN'] = new_dca_admin
         end
 
-       # aah_record.save!
+       aah_record.save!
 
       rescue => exception
         puts "ERROR There was an error doing the conversion for: #{pid}"

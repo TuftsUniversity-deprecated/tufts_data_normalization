@@ -14,7 +14,7 @@ namespace :tufts_data do
     CSV.foreach(args[:arg1], encoding: "ISO8859-1") do |row|
       pid = row[0]
       begin
-        election_record = TuftsBase.find(pid)
+        election_record = TuftsVotingRecord.find(pid)
       rescue ActiveFedora::ObjectNotFoundError
         puts "ERROR Could not locate object: #{pid}"
         next
@@ -25,21 +25,20 @@ namespace :tufts_data do
       end
 
       begin
-        ds_opts = {:label => 'Administrative Metadata'}
-        new_dca_admin = election_record.create_datastream DcaAdmin, 'DCA-ADMIN', ds_opts
-        new_dca_admin.ng_xml = DcaAdmin.xml_template
-        new_dca_admin.steward = "dca"
-        new_dca_admin.displays = ["dl","elections"]
-        new_dca_admin.createdby = "nnv"
-
-        if election_record.datastreams['DCA-ADMIN'].nil?
-          election_record.add_datastream new_dca_admin
+       base_directory = 'http://bucket01.lib.tufts.edu/data05/tufts/central/dca'
+       record_xml_dir = 'record-xml'
+       nnv_file_url= base_directory + '/' + collection_code(pid) + '/' + record_xml_dir + '/' + pid_without_namespace(pid) + '.xml'
+       ds_opts = {:controlGroup => 'E', :mimeType => 'text/xml', :label => 'Voting Record XML Data', :dsLocation => nnv_file_url}
+       ds = election_record.create_datastream(ActiveFedora::Datastream,'RECORD-XML', ds_opts)
+ 
+        if election_record.datastreams['RECORD-XML'].nil?
+          election_record.add_datastream ds
         else
-          election_record.datastreams['DCA-ADMIN'] = new_dca_admin
+          election_record.datastreams['RECORD-XML'] = ds
         end
 
         election_record.save!
-        #puts "#{pid} successfully migrated"
+
       rescue => exception
         puts "ERROR There was an error doing the conversion for: #{pid}"
         puts exception.backtrace
@@ -47,4 +46,13 @@ namespace :tufts_data do
       end
     end 
   end
+
+  def collection_code(pid)
+    pid.sub(/.+:([^.]+).*/, '\1')
+  end
+
+  def pid_without_namespace(pid)
+    pid.sub(/.+:(.+)$/, '\1')
+  end
+
 end

@@ -29,18 +29,28 @@ namespace :tufts_data do
        record_xml_dir = 'record-xml'
        nnv_file_url= base_directory + '/' + collection_code(pid) + '/' + record_xml_dir + '/' + pid_without_namespace(pid) + '.xml'
        ds_opts = {:controlGroup => 'E', :mimeType => 'text/xml', :label => 'Voting Record XML Data', :dsLocation => nnv_file_url}
-       ds = election_record.create_datastream(ActiveFedora::Datastream,'RECORD-XML', ds_opts)
- 
-        if election_record.datastreams['RECORD-XML'].nil?
-          election_record.add_datastream ds
-        else
-          election_record.datastreams['RECORD-XML'] = ds
-        end
 
-        election_record.save!
+       unless election_record.datastreams['RECORD-XML-2'].nil? 
+         election_record.datastreams['RECORD-XML-2'].delete
+       end
+       
+       unless  election_record.datastreams['RECORD-XML'].nil?
+         election_record.datastreams['RECORD-XML'].delete
+       end
+
+       election_record.save!
+
+       election_record = TuftsVotingRecord.find(pid)
+
+       ds = election_record.create_datastream(ActiveFedora::Datastream,'RECORD-XML', ds_opts)
+
+       election_record.add_datastream ds
+
+       election_record.save!
 
       rescue => exception
         puts "ERROR There was an error doing the conversion for: #{pid}"
+        puts exception.message
         puts exception.backtrace
         next
       end

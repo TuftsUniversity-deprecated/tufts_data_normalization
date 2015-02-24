@@ -23,20 +23,21 @@ namespace :tufts_data do
       end
 
       begin
-#/tdr'
-#  object_store_base: '/'
-#  object_store_dca: 'data05/tufts/central/dca'
         base_directory = '/tdr/data05/tufts/central/dca'
         #base_directory = '/home/hydradm/test_election_export'
         record_xml_dir = 'record-xml'
         export_file_dir= base_directory + '/' + collection_code(pid) + '/' + record_xml_dir + '/'
+        #puts "#{export_file_dir}"
+
         FileUtils.mkdir_p(export_file_dir)
         export_file = export_file_dir + pid_without_namespace(pid) + '.xml'
-        File.open(export_file, 'w') { |file|
-          file.write(record.datastreams["RECORD-XML"].content)
+        #puts "#{export_file}"
+        File.open(export_file, 'w:ISO-8859-1') { |file|
+          file.write(record.datastreams["RECORD-XML"].content.force_encoding("ISO-8859-1"))
         }
       rescue => exception
         puts "ERROR There was an error doing the conversion for: #{pid}"
+        puts exception.message
         puts exception.backtrace
         next
       end

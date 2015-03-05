@@ -17,6 +17,7 @@ module TuftsDataNormalization
       load "tasks/tisch_data_migration.rake"
       load "tasks/election_record_xml_export.rake"
       load "tasks/verify_dca_admin.rake"
+      load "tasks/clean_up_audio_datastreams.rake"
     end
   end
 end

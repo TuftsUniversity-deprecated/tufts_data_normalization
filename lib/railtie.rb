@@ -19,6 +19,7 @@ module TuftsDataNormalization
       load "tasks/verify_dca_admin.rake"
       load "tasks/clean_up_audio_datastreams.rake"
       load "tasks/clean_up_access_xml.rake"
+      load "tasks/member_of_analysis.rake"
     end
   end
 end

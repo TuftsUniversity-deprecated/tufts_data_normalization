@@ -20,6 +20,7 @@ module TuftsDataNormalization
       load "tasks/clean_up_audio_datastreams.rake"
       load "tasks/clean_up_access_xml.rake"
       load "tasks/member_of_analysis.rake"
+      load "tasks/bibliographic_citation_audit.rake"
     end
   end
 end

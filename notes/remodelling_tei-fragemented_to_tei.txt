@@ -1,0 +1,7 @@
+a = TuftsTEI.find('tufts:UA069.005.DO.00002')
+a.object_relations
+a.object_relations.add(:has_model,'info:fedora/cm:Text.TEI')
+a.object_relations.delete(:has_model,"info:fedora/cm:Text.TEI-Fragmented")
+a.save
+quit
+

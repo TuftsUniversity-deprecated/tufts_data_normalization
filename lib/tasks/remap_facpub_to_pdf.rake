@@ -3,8 +3,8 @@ require 'active_fedora'
 
 namespace :tufts_data do
 
-  desc 'clean up Access.xml datastreams'
-  task :clean_up_access_xml, [:arg1] => :environment do |t, args|
+  desc 'remap facpub to pdf'
+  task :remap_facpub_to_pdf, [:arg1] => :environment do |t, args|
     if args[:arg1].nil?
       puts "YOU MUST SPECIFY FULL PATH TO FILE, ABORTING!"
       puts "Usage: rake tufts_data:fix_election_records['/home/hydradm/path_to/list_of_pids.txt']"
@@ -14,7 +14,7 @@ namespace :tufts_data do
     CSV.foreach(args[:arg1], encoding: "ISO8859-1") do |row|
       pid = row[0]
       begin
-        record = TuftsBase.find(pid)
+        record = TuftsPdf.find(pid)
       rescue ActiveFedora::ObjectNotFoundError
 #        puts "ERROR Could not locate object: #{pid}"
         next
@@ -26,7 +26,6 @@ namespace :tufts_data do
 
       begin
 
-       unless record.datastreams['Access.xml'].nil? 
           #this was just a check for the Access.xml datastream
           #puts "#{pid} has Access.xml"
           
@@ -55,19 +54,9 @@ namespace :tufts_data do
           #else
           #  puts "directory not empty #{dir}"
           #end
-          record.datastreams['Access.xml'].delete
+          record.object_relations.add(:has_model,'info:fedora/cm:Text.PDF')
+          record.object_relations.delete(:has_model,"info:fedora/cm:Text.FacPub")
           record.save!
-       end
-       
-#       election_record.save!
-
-#       election_record = TuftsVotingRecord.find(pid)
-
-#       ds = election_record.create_datastream(ActiveFedora::Datastream,'RECORD-XML', ds_opts)
-
-#       election_record.add_datastream ds
-
-#       election_record.save!
 
       rescue => exception
         puts "ERROR There was an error doing the conversion for: #{pid}"

@@ -27,28 +27,33 @@ namespace :tufts_data do
       begin
 
        unless record.datastreams['STREAM_ATOM'].nil? 
-#         election_record.datastreams['RECORD-XML-2'].delete
-         puts "#{pid} has STREAM_ATOM"
+          #puts "#{pid} has STREAM_ATOM"
+          #doc = record.datastreams["STREAM_ATOM"].content
+  	  #dest_folder = '/home/hydradm/tufts/stream_atom_archiving/'
+          #local_filename = dest_folder + pid + '_stream_atom.xml'
+          #File.open(local_filename, 'w') {|f| f.write(doc) }
+          record.datastreams['STREAM_ATOM'].delete
        end
        
        unless  record.datastreams['PRESENT_SMIL'].nil?
-#         election_record.datastreams['RECORD-XML'].delete
-         puts "#{pid} has PRESENT_SMIL"
+          #puts "#{pid} has PRESENT_SMIL"
+          #filename = record.local_path_for("PRESENT_SMIL")
+  	  #dest_folder = '/home/hydradm/tufts/present_smil_archiving/'
+          #FileUtils.cp(filename, dest_folder) 
+          #filename = record.local_path_for("PRESENT_SMIL")
+          #FileUtils.rm(filename)
+          #puts "removing #{filename}"
+          #dir = File.dirname(filename)
+          #if (Dir.entries(dir) - %w{ . .. }).empty?
+          #  FileUtils.remove_dir(dir)
+          #  puts "removing directory #{dir}"
+          #else
+          #  puts "directory not empty #{dir}"
+          #end
+          record.datastreams['PRESENT_SMIL'].delete
        end
 
-       unless  record.datastreams['PRESENT_SIML'].nil?
-#         election_record.datastreams['RECORD-XML'].delete
-         puts "#{pid} has PRESENT_SIML"
-       end
-#       election_record.save!
-
-#       election_record = TuftsVotingRecord.find(pid)
-
-#       ds = election_record.create_datastream(ActiveFedora::Datastream,'RECORD-XML', ds_opts)
-
-#       election_record.add_datastream ds
-
-#       election_record.save!
+      record.save!
 
       rescue => exception
         puts "ERROR There was an error doing the conversion for: #{pid}"

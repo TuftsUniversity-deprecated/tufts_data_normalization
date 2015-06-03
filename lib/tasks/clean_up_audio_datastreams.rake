@@ -26,16 +26,32 @@ namespace :tufts_data do
 
       begin
 
-       unless record.datastreams['STREAM_ATOM'].nil? 
+       unless record.datastreams['ARCHIVAL_SOUND'].nil? 
+#          puts "#{pid} has ARCHIVAL_SOUND"
+          filename = record.local_path_for("ARCHIVAL_SOUND")
+          dst_path = filename.sub('archival_sound','archival_wav')
+#          puts "ARCHIVAL SOUND: #{filename}"
+#          puts "ARCHIVAL_WAV: #{dst_path}"
+#          FileUtils.mkdir_p(File.dirname(dst_path))
+#          FileUtils.cp(filename, dst_path)
+           archival_audio_file_url = 'http://bucket01.lib.tufts.edu/' + dst_path.sub('/tdr/','')
+           ds_opts = {:controlGroup => 'E', :mimeType => 'text/xml', :label => 'Archival Audio Data', :dsLocation => archival_audio_file_url}
+
+           ds = record.create_datastream(ActiveFedora::Datastream,'ARCHIVAL_WAV', ds_opts)
+#puts "#{archival_audio_file_url}"
+           record.add_datastream ds
+        end
+#       end
+       #unless record.datastreams['STREAM_ATOM'].nil? 
           #puts "#{pid} has STREAM_ATOM"
           #doc = record.datastreams["STREAM_ATOM"].content
   	  #dest_folder = '/home/hydradm/tufts/stream_atom_archiving/'
           #local_filename = dest_folder + pid + '_stream_atom.xml'
           #File.open(local_filename, 'w') {|f| f.write(doc) }
-          record.datastreams['STREAM_ATOM'].delete
-       end
+          #record.datastreams['STREAM_ATOM'].delete
+       #end
        
-       unless  record.datastreams['PRESENT_SMIL'].nil?
+       #unless  record.datastreams['PRESENT_SMIL'].nil?
           #puts "#{pid} has PRESENT_SMIL"
           #filename = record.local_path_for("PRESENT_SMIL")
   	  #dest_folder = '/home/hydradm/tufts/present_smil_archiving/'
@@ -50,9 +66,9 @@ namespace :tufts_data do
           #else
           #  puts "directory not empty #{dir}"
           #end
-          record.datastreams['PRESENT_SMIL'].delete
-       end
-
+          #record.datastreams['PRESENT_SMIL'].delete
+       #end
+#
       record.save!
 
       rescue => exception

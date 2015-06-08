@@ -22,6 +22,8 @@ module TuftsDataNormalization
       load "tasks/member_of_analysis.rake"
       load "tasks/bibliographic_citation_audit.rake"
       load "tasks/remap_facpub_to_pdf.rake"
+      load "tasks/remap_audio_text_to_audio.rake"
+      load "tasks/remap_3ds_4ds.rake"
     end
   end
 end

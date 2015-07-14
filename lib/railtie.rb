@@ -24,6 +24,7 @@ module TuftsDataNormalization
       load "tasks/remap_facpub_to_pdf.rake"
       load "tasks/remap_audio_text_to_audio.rake"
       load "tasks/remap_3ds_4ds.rake"
+      load "tasks/drafts.rake"
     end
   end
 end

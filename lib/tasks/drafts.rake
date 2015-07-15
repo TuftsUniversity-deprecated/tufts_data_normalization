@@ -27,16 +27,24 @@ namespace :tufts_data do
       begin
         published_object = TuftsBase.find(pid, cast: true)
         draft_pid = published_object.pid.sub('tufts','draft')
-        Job::Revert.new('uuid', 'record_id' => published_object.pid, 'batch_id' => 1).perform
+#        Job::Revert.new('uuid', 'record_id' => published_object.pid, 'batch_id' => 2).perform
+        RevertService.new(published_object, 1).run
+        #batch = BatchRevert.new(pids: [published_object.pid])
+        #BatchRunnerService.new(batch).run
         draft_object = TuftsBase.find(draft_pid, cast: true)
         draft_object.publishing = true
         draft_object.save
         draft_object.publishing = false
         puts "Draft Created #{draft_object.pid}"
+      rescue Rubydora::FedoraInvalidRequest => fir
+        puts "Try to fix checksum here"
+        FedoraObjectCopyService.new(published_object.class, from: published_object.pid, to: draft_pid, object: published_object).clean_completely
+        puts "Draft Created #{draft_pid}"
       rescue => exception
         puts "ERROR There was an error doing the conversion for: #{pid}"
         puts exception.message
         puts exception.backtrace
+        puts exception.class
         next
       end
     end 

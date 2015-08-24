@@ -39,6 +39,8 @@ namespace :tufts_data do
       rescue Rubydora::FedoraInvalidRequest => fir
         puts "Try to fix checksum here"
         FedoraObjectCopyService.new(published_object.class, from: published_object.pid, to: draft_pid, object: published_object).clean_completely
+        draft_object = TuftsBase.find(draft_pid, cast: true)
+        draft_object.update_index
         puts "Draft Created #{draft_pid}"
       rescue => exception
         puts "ERROR There was an error doing the conversion for: #{pid}"

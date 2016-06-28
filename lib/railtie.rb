@@ -26,6 +26,7 @@ module TuftsDataNormalization
       load "tasks/remap_3ds_4ds.rake"
       load "tasks/drafts.rake"
       load "tasks/unpublish_drafts.rake"
+      load "tasks/update_trove_visibility.rake"
     end
   end
 end

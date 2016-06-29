@@ -1,5 +1,6 @@
 require 'rsolr'
 require 'yaml'
+require 'active-fedora'
 
 namespace :tufts_data do
   desc 'Update trove visibility settings'
@@ -10,16 +11,12 @@ namespace :tufts_data do
     end
 
     creds = YAML.load_file("config/solr.yml")
-    solr_url = creds['development']['url']
-
-    solr = RSolr.connect :url => solr_url
-    response = solr.get 'select', :params => {:q => '*:*'}
+    solr = RSolr.connect :url => creds[Rails.env]['url']
+    response = solr.get 'select', :params => {:q => 'displays_ssi:trove'}
 
     trove_ids = []
     response['response']['docs'].each do |myrecord|
-      if myrecord['displays_ssi'] == "trove"
-        trove_ids.push myrecord['id']
-      end
+      trove_ids.push myrecord['id']
     end
 
     puts trove_ids

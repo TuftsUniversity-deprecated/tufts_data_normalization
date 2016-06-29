@@ -33,11 +33,9 @@ namespace :tufts_data do
       end
 
       begin
-        if fedora_object.visibility.nil?
-          puts "Visibility is nil"
-        else
-          puts "#{fedora_object.visibility}"
-        end
+        puts "Setting #{fedora_object.title} to authenticated visibility."
+        fedora_object.visibility = "authenticated"
+        fedora_object.save
       rescue => ex
         puts "ERROR There was an error doing the conversion for: #{pid}"
         puts ex.message

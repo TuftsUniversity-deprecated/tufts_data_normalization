@@ -12,7 +12,10 @@ namespace :tufts_data do
 
     creds = YAML.load_file("config/solr.yml")
     solr = RSolr.connect :url => creds[Rails.env]['url']
-    response = solr.get 'select', :params => {:q => 'displays_ssi:trove'}
+    response = solr.get 'select', :params => {
+      :q => 'displays_ssi:trove id:draft*',
+      :rows => 9999999
+    }
 
     trove_ids = []
     response['response']['docs'].each do |myrecord|
@@ -33,9 +36,10 @@ namespace :tufts_data do
       end
 
       begin
-        puts "Setting #{fedora_object.title} to authenticated visibility."
+        puts "Setting #{fedora_object.title} (#{fedora_object.id}) to authenticated visibility."
         fedora_object.visibility = "authenticated"
         fedora_object.save
+        PublishService.new(fedora_object).run
       rescue => ex
         puts "ERROR There was an error doing the conversion for: #{pid}"
         puts ex.message

@@ -39,7 +39,7 @@ namespace :tufts_data do
         puts "Setting #{fedora_object.title} (#{fedora_object.id}) to authenticated visibility."
         fedora_object.visibility = "authenticated"
         fedora_object.save
-        PublishService.new(fedora_object).run
+#        PublishService.new(fedora_object).run
       rescue => ex
         puts "ERROR There was an error doing the conversion for: #{pid}"
         puts ex.message

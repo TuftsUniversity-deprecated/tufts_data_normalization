@@ -20,8 +20,7 @@ namespace :tufts_data do
   def getSolr
     if(String === @solr)
       creds = YAML.load_file("config/solr.yml")
-      #RSolr.connect(:url => creds[Rails.env]['url'])
-      @solr = RSolr.connect(url: "https://mira.lib.tufts.edu/solr/development")
+      @solr = RSolr.connect(:url => creds[Rails.env]['url'])
     else
       @solr
     end

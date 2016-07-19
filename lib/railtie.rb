@@ -28,6 +28,7 @@ module TuftsDataNormalization
       load "tasks/unpublish_drafts.rake"
       load "tasks/update_trove_visibility.rake"
       load "tasks/batch_revert_published_to_drafts.rake"
+      load "tasks/audit_fields.rake"
     end
   end
 end

@@ -23,35 +23,38 @@ namespace :tufts_data do
       end
 
       begin
+        collection = nil
+        collection = record.object_relations[:is_member_of_collection].first if record.object_relations[:is_member_of_collection]
         case record.class.to_s
           when "TuftsPdf", "TuftsEAD", "TuftsTEI"
             size = File.size record.local_path_for 'Archival.pdf'
-            out << [pid,record.class,record.steward.first,(size.to_f / 2**20).round(2)]
+            out << [pid,record.class,record.steward.first,collection,(size.to_f / 2**20).round(2)]
           when "TuftsAudio"
             size = File.size record.local_path_for 'ARCHIVAL_WAV'
-            out << [pid,record.class,record.steward.first,(size.to_f / 2**20).round(2)]
+            out << [pid,record.class,record.steward.first,collection,(size.to_f / 2**20).round(2)]
             size = File.size record.local_path_for 'ARCHIVAL_XML'
-            out << [pid,record.class,record.steward.first,(size.to_f / 2**20).round(2)]
+            out << [pid,record.class,record.steward.first,collection,(size.to_f / 2**20).round(2)]
 #          when "TuftsGenericObject"
 #            size = File.size record.local_path_for 'GENERIC-CONTENT'
 #            out << [pid,record.class,record.steward.first,(size.to_f / 2**20).round(2)]
           when 'TuftsImage'
             size = File.size record.local_path_for 'Archival.tif'
-            out << [pid,record.class,record.steward.first,(size.to_f / 2**20).round(2)]
+            out << [pid,record.class,record.steward.first,collection,(size.to_f / 2**20).round(2)]
           when 'TuftsRCR'
             size = File.size record.local_path_for 'RCR-CONTENT'
-            out << [pid,record.class,record.steward.first,(size.to_f / 2**20).round(2)]
+            out << [pid,record.class,record.steward.first,collection,(size.to_f / 2**20).round(2)]
           when 'TuftsVideo'
             size = File.size record.local_path_for 'Archival.video'
-            out << [pid,record.class,record.steward.first,(size.to_f / 2**20).round(2)]
+            out << [pid,record.class,record.steward.first,collection,(size.to_f / 2**20).round(2)]
             size = File.size record.local_path_for 'ARCHIVAL_XML'
-            out << [pid,record.class,record.steward.first,(size.to_f / 2**20).round(2)]
+            out << [pid,record.class,record.steward.first,collection,(size.to_f / 2**20).round(2)]
           when 'TuftsVotingRecord'
             size = File.size record.local_path_for 'RECORD-XML'
-            out << [pid,record.class,record.steward,(size.to_f / 2**20).round(2)]
+            out << [pid,record.class,record.steward.first,collection,(size.to_f / 2**20).round(2)]
           else
             puts "#{record.class} for #{pid} unknown"
           end
+          
       rescue => exception
         puts "ERROR There was an error collecting data for: #{pid}"
         puts exception.backtrace

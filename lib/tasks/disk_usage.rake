@@ -29,31 +29,32 @@ namespace :tufts_data do
         elsif record.object_relations[:has_description] 
           collection = record.object_relations[:has_description].first
         end
+        size = 0
         case record.class.to_s
           when "TuftsPdf", "TuftsEAD", "TuftsTEI"
-            size = File.size record.local_path_for 'Archival.pdf'
+            size = File.size record.local_path_for 'Archival.pdf' if File.file? record.local_path_for 'Archival.pdf'
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
           when "TuftsAudio"
-            size = File.size record.local_path_for 'ARCHIVAL_WAV'
+            size = File.size record.local_path_for 'ARCHIVAL_WAV' if File.file? record.local_path_for 'ARCHIVAL_WAV'
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
-            size = File.size record.local_path_for 'ARCHIVAL_XML'
+            size = File.size record.local_path_for 'ARCHIVAL_XML' if File.file? record.local_path_for 'ARCHIVAL_XML'
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
 #          when "TuftsGenericObject"
 #            size = File.size record.local_path_for 'GENERIC-CONTENT'
 #            out << [pid,record.class,record.steward.first,(size.to_f / 2**20).round(2)]
           when 'TuftsImage'
-            size = File.size record.local_path_for 'Archival.tif'
+            size = File.size record.local_path_for 'Archival.tif' if File.file? record.local_path_for 'Archival.tif'
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
           when 'TuftsRCR'
-            size = File.size record.local_path_for 'RCR-CONTENT'
+            size = File.size record.local_path_for 'RCR-CONTENT' if File.file? record.local_path_for 'RCR-CONTENT'
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
           when 'TuftsVideo'
-            size = File.size record.local_path_for 'Archival.video'
+            size = File.size record.local_path_for 'Archival.video' if File.file? record.local_path_for 'Archival.video'
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
-            size = File.size record.local_path_for 'ARCHIVAL_XML'
+            size = File.size record.local_path_for 'ARCHIVAL_XML' if File.file? record.local_path_for 'ARCHIVAL_XML'
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
           when 'TuftsVotingRecord'
-            size = File.size record.local_path_for 'RECORD-XML'
+            size = File.size record.local_path_for 'RECORD-XML' if File.file? record.local_path_for 'RECORD-XML'
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
           else
             puts "#{record.class} for #{pid} unknown"

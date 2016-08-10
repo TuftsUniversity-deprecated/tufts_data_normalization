@@ -51,6 +51,8 @@ namespace :tufts_data do
             size = File.size record.local_path_for 'RCR-CONTENT' if File.file? record.local_path_for 'RCR-CONTENT'
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
           when 'TuftsVideo'
+            video_size = 0
+            xml_size = 0
             video_size = File.size record.local_path_for 'Archival.video' if File.file? record.local_path_for 'Archival.video'
             xml_size = File.size record.local_path_for 'ARCHIVAL_XML' if File.file? record.local_path_for 'ARCHIVAL_XML'
             size = video_size + xml_size

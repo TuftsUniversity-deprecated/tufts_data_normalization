@@ -35,9 +35,11 @@ namespace :tufts_data do
             size = File.size record.local_path_for 'Archival.pdf' if File.file? record.local_path_for 'Archival.pdf'
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
           when "TuftsAudio"
-            size = File.size record.local_path_for 'ARCHIVAL_WAV' if File.file? record.local_path_for 'ARCHIVAL_WAV'
-            out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
-            size = File.size record.local_path_for 'ARCHIVAL_XML' if File.file? record.local_path_for 'ARCHIVAL_XML'
+            audio_size = 0
+            audio_size = File.size record.local_path_for 'ARCHIVAL_WAV' if File.file? record.local_path_for 'ARCHIVAL_WAV'
+            xml_size = 0
+            xml_size = File.size record.local_path_for 'ARCHIVAL_XML' if File.file? record.local_path_for 'ARCHIVAL_XML'
+            size = xml_size + audio_size
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
 #          when "TuftsGenericObject"
 #            size = File.size record.local_path_for 'GENERIC-CONTENT'
@@ -49,9 +51,9 @@ namespace :tufts_data do
             size = File.size record.local_path_for 'RCR-CONTENT' if File.file? record.local_path_for 'RCR-CONTENT'
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
           when 'TuftsVideo'
-            size = File.size record.local_path_for 'Archival.video' if File.file? record.local_path_for 'Archival.video'
-            out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
-            size = File.size record.local_path_for 'ARCHIVAL_XML' if File.file? record.local_path_for 'ARCHIVAL_XML'
+            video_size = File.size record.local_path_for 'Archival.video' if File.file? record.local_path_for 'Archival.video'
+            xml_size = File.size record.local_path_for 'ARCHIVAL_XML' if File.file? record.local_path_for 'ARCHIVAL_XML'
+            size = video_size + xml_size
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
           when 'TuftsVotingRecord'
             size = File.size record.local_path_for 'RECORD-XML' if File.file? record.local_path_for 'RECORD-XML'

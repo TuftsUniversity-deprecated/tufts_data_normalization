@@ -31,9 +31,12 @@ namespace :tufts_data do
         end
         size = 0
         case record.class.to_s
-          when "TuftsPdf", "TuftsEAD", "TuftsTEI"
+          when "TuftsPdf"
             size = File.size record.local_path_for 'Archival.pdf' if File.file? record.local_path_for 'Archival.pdf'
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
+          when "TuftsEAD", "TuftsTEI"
+            size = File.size record.local_path_for 'Archival.pdf' if File.file? record.local_path_for 'Archival.pdf'
+            out << [pid,record.class,record.steward.first,collection,record.creatordept,size.to_f]
           when "TuftsAudio"
             audio_size = 0
             audio_size = File.size record.local_path_for 'ARCHIVAL_WAV' if File.file? record.local_path_for 'ARCHIVAL_WAV'
@@ -49,7 +52,7 @@ namespace :tufts_data do
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
           when 'TuftsRCR'
             size = File.size record.local_path_for 'RCR-CONTENT' if File.file? record.local_path_for 'RCR-CONTENT'
-            out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
+            out << [pid,record.class,record.steward.first,collection,record.creatordept,size.to_f]
           when 'TuftsVideo'
             video_size = 0
             xml_size = 0
@@ -59,7 +62,7 @@ namespace :tufts_data do
             out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
           when 'TuftsVotingRecord'
             size = File.size record.local_path_for 'RECORD-XML' if File.file? record.local_path_for 'RECORD-XML'
-            out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
+            out << [pid,record.class,record.steward.first,collection,record.creatordept,size.to_f]
           else
             puts "#{record.class} for #{pid} unknown"
           end

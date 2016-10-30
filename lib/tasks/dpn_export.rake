@@ -4,7 +4,7 @@ require 'active_fedora'
 namespace :tufts_data do
 
   task :dpn_export, [:arg1] => :environment do |t, args|
-    dpn_directory = '/tdr/data05/tufts/dpn'
+
     dpn_logger = Logger.new('dpn.log')
 
     if args[:arg1].nil?
@@ -35,7 +35,7 @@ namespace :tufts_data do
 
         case record.class.to_s
           when 'TuftsImage'
-            process_image record
+            process_image(record, collection)
           else
             dpn_logger.error "#{record.class} for #{pid} unknown"
         end
@@ -51,21 +51,43 @@ namespace :tufts_data do
 
   private
 
-  def process_image record
+  def process_image(record, collection)
     if File.file? record.local_path_for 'Archival.tif'
-      record.local_path_for 'Archival.tif'
+      source_file = record.local_path_for('Archival.tif')
+      export_file(source_file, collection)
     else
       dpn_logger.error "#{record.class} #{pid} missing Archival.tif datastream file?"
     end
-    #out << [pid,record.class,record.steward.first,collection,record.creatordept,(size.to_f / 2**20).round(2)]
+
+  end
+
+  def export_file(file, collection)
+    dpn_directory = '/tdr/data05/tufts/dpn'
+    dest = "#{dpn_directory}/#{collection}/"
+    copy_with_path(file, dest)
+  end
+
+  def copy_with_path(src, dst)
+    FileUtils.mkdir_p(File.dirname(dst))
+    FileUtils.cp(src, dst)
   end
 
   def determine_collection record
-    collection = nil
+    collection = ''
     if record.object_relations[:is_member_of_collection]
       collection = record.object_relations[:is_member_of_collection].first
     elsif record.object_relations[:has_description]
       collection = record.object_relations[:has_description].first
+    end
+
+    collection.slice!('info:fedora/')
+
+    if collection.nil? || collection == ''
+      collection = record.source
+    end
+
+    if collection.nil? || collection.length < 2 || collection.length > 40
+      collection = 'uncollected'
     end
 
     collection

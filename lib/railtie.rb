@@ -30,6 +30,8 @@ module TuftsDataNormalization
       load "tasks/batch_revert_published_to_drafts.rake"
       load "tasks/audit_fields.rake"
       load "tasks/disk_usage.rake"
+      load "tasks/dpn_export.rake"
+
     end
   end
 end

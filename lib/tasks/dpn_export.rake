@@ -1,6 +1,9 @@
 require 'csv'
 require 'active_fedora'
 require 'fileutils'
+require 'open-uri'
+require 'uri'
+
 
 
 namespace :tufts_data do
@@ -39,6 +42,10 @@ namespace :tufts_data do
         case record.class.to_s
           when 'TuftsImage'
             process_image(record, collection)
+          when 'TuftsVotingRecord'
+            process_voting_record(record, collection)
+          when 'TuftsGenericObject'
+            process_generic_object(record, collection)
           else
             @dpn_logger.error "#{record.class} for #{pid} unknown"
         end
@@ -54,6 +61,29 @@ namespace :tufts_data do
   end
 
   private
+
+  def process_generic_object(record, collection)
+    xml_doc = Nokogiri::XML(record.datastreams['GENERIC-CONTENT'].content)
+    xml_doc.remove_namespaces!
+
+    # Based on Generic Objects only having 1 file, which is true so far.
+    link = :xml_doc.xpath('//link')[0].text
+    download = open(link)
+    uri = URI.parse(link)
+    dpn_directory = '/tdr/data05/tufts/dpn'
+    base_name = File.basename uri.path
+    dest = "#{dpn_directory}/#{collection}/#{base_name}"
+    IO.copy_stream(download, dest)
+  end
+
+  def process_voting_record(record, collection)
+    if File.file? record.local_path_for 'RECORD-XML'
+      source_file = record.local_path_for('RECORD-XML')
+      export_file(source_file, collection)
+    else
+      @dpn_logger.error "#{record.class} #{pid} missing RECORD-XML datastream file?"
+    end
+  end
 
   def process_image(record, collection)
     if File.file? record.local_path_for 'Archival.tif'

@@ -69,13 +69,23 @@ namespace :tufts_data do
     xml_doc.remove_namespaces!
 
     # Based on Generic Objects only having 1 file, which is true so far.
-    link = :xml_doc.xpath('//link')[0].text
-    download = open(link)
+    link = xml_doc.xpath('//link')[0].text
+    begin
+      download = open(link)
+    rescue OpenURI::HTTPError
+      @dpn_logger.error "LINK : #{link}"
+    end
     uri = URI.parse(link)
     dpn_directory = '/tdr/data05/tufts/dpn'
     base_name = File.basename uri.path
+    dest_folder = "#{dpn_directory}/#{collection}/"
     dest = "#{dpn_directory}/#{collection}/#{base_name}"
-    IO.copy_stream(download, dest)
+    @dpn_logger.info "LINK : #{link}"
+    FileUtils.mkdir_p(dest_folder) unless File.exist?(dest_folder)
+
+    File.open(dest, "w") do |f|
+      IO.copy_stream(download, f)
+    end
   end
 
   def process_voting_record(record, collection)

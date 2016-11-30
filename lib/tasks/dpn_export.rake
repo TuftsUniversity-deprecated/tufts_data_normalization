@@ -93,7 +93,7 @@ namespace :tufts_data do
       source_file = record.local_path_for('RECORD-XML')
       export_file(source_file, collection)
     else
-      @dpn_logger.error "#{record.class} #{pid} missing RECORD-XML datastream file?"
+      @dpn_logger.error "#{record.class} #{record.pid} missing RECORD-XML datastream file?"
     end
   end
 
@@ -102,7 +102,8 @@ namespace :tufts_data do
       source_file = record.local_path_for('Archival.pdf')
       export_file(source_file, collection)
     else
-      @dpn_logger.error "#{record.class} #{pid} missing Archival.pdf  datastream file?"
+      @dpn_logger.error "#{record.class} #{record.pid} missing Archival.pdf  datastream file?"
+      @dpn_logger.error "#{record.local_path_for('Archival.pdf')}  datastream file?"
     end
 
   end
@@ -112,7 +113,7 @@ namespace :tufts_data do
       source_file = record.local_path_for('Archival.tif')
       export_file(source_file, collection)
     else
-      @dpn_logger.error "#{record.class} #{pid} missing Archival.tif datastream file?"
+      @dpn_logger.error "#{record.class} #{record.pid} missing Archival.tif datastream file?"
     end
 
   end
@@ -141,7 +142,7 @@ namespace :tufts_data do
       collection = record.object_relations[:has_description].first
     end
 
-    collection.slice!('info:fedora/')
+    collection.slice!('info:fedora/') unless collection.nil?
 
     if collection.nil? || collection == ''
       collection = record.source

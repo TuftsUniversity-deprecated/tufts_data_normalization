@@ -40,6 +40,14 @@ namespace :tufts_data do
         next if dry_run
 
         case record.class.to_s
+          when 'TuftsVideo'
+            process_tei(record, collection)
+            process_video(record, collection)
+          when 'TuftsAudio'
+            process_tei(record, collection)
+            process_audio(record, collection)
+          when 'TuftsTEI'
+            process_tei(record, collection)
           when 'TuftsPdf'
             process_pdf(record, collection)
           when 'TuftsImage'
@@ -95,6 +103,39 @@ namespace :tufts_data do
     else
       @dpn_logger.error "#{record.class} #{record.pid} missing RECORD-XML datastream file?"
     end
+  end
+
+  def process_video(record, collection)
+    if File.file? record.local_path_for 'Archival.video'
+      source_file = record.local_path_for('Archival.video')
+      export_file(source_file, collection)
+    else
+      @dpn_logger.error "#{record.class} #{record.pid} missing Archival.video  datastream file?"
+      @dpn_logger.error "#{record.local_path_for('Archival.video')}  datastream file?"
+    end
+
+  end
+
+  def process_audio(record, collection)
+    if File.file? record.local_path_for 'ARCHIVAL_WAV'
+      source_file = record.local_path_for('ARCHIVAL_WAV')
+      export_file(source_file, collection)
+    else
+      @dpn_logger.error "#{record.class} #{record.pid} missing ARCHIVAL_WAV  datastream file?"
+      @dpn_logger.error "#{record.local_path_for('ARCHIVAL_WAV')}  datastream file?"
+    end
+
+  end
+
+  def process_tei(record, collection)
+    if File.file? record.local_path_for 'Archival.xml'
+      source_file = record.local_path_for('Archival.xml')
+      export_file(source_file, collection)
+    else
+      @dpn_logger.error "#{record.class} #{record.pid} missing Archival.xml  datastream file?"
+      @dpn_logger.error "#{record.local_path_for('Archival.xml')}  datastream file?"
+    end
+
   end
 
   def process_pdf(record, collection)

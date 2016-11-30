@@ -189,7 +189,7 @@ namespace :tufts_data do
       collection = record.source
     end
 
-    if collection.nil? || collection.length < 2 || collection.length > 40
+    if collection.nil? || collection.length < 2 || collection.length > 140
       collection = 'uncollected'
     end
 

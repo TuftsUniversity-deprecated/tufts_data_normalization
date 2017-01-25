@@ -46,6 +46,8 @@ namespace :tufts_data do
           when 'TuftsAudio'
             process_tei(record, collection)
             process_audio(record, collection)
+          when 'TuftsEAD'
+            process_tei(record, collection)
           when 'TuftsTEI'
             process_tei(record, collection)
           when 'TuftsPdf'
@@ -88,7 +90,7 @@ namespace :tufts_data do
     base_name = File.basename uri.path
     dest_folder = "#{dpn_directory}/#{collection}/"
     dest = "#{dpn_directory}/#{collection}/#{base_name}"
-    @dpn_logger.info "LINK : #{link}"
+    #@dpn_logger.info "LINK : #{link}"
     FileUtils.mkdir_p(dest_folder) unless File.exist?(dest_folder)
 
     File.open(dest, "w") do |f|
@@ -117,8 +119,8 @@ namespace :tufts_data do
   end
 
   def process_audio(record, collection)
-    if File.file? record.local_path_for 'ARCHIVAL_WAV'
-      source_file = record.local_path_for('ARCHIVAL_WAV')
+    if File.file? record.local_path_for('ARCHIVAL_WAV', 'wav')
+      source_file = record.local_path_for('ARCHIVAL_WAV', 'wav')
       export_file(source_file, collection)
     else
       @dpn_logger.error "#{record.class} #{record.pid} missing ARCHIVAL_WAV  datastream file?"
@@ -188,6 +190,8 @@ namespace :tufts_data do
     if collection.nil? || collection == ''
       collection = record.source
     end
+
+   collection = collection.first if collection.kind_of?(Array)
 
     if collection.nil? || collection.length < 2 || collection.length > 140
       collection = 'uncollected'

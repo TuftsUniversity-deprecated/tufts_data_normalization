@@ -31,7 +31,7 @@ module TuftsDataNormalization
       load "tasks/audit_fields.rake"
       load "tasks/disk_usage.rake"
       load "tasks/dpn_export.rake"
-
+      load "tasks/fedora_4_collections.rake"
     end
   end
 end

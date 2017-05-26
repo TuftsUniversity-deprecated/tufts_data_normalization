@@ -50,6 +50,8 @@ namespace :tufts_data do
             process_tei(record, collection)
           when 'TuftsTEI'
             process_tei(record, collection)
+          when 'TuftsRCR'
+            process_rcr(record, collection)
           when 'TuftsPdf'
             process_pdf(record, collection)
           when 'TuftsImage'
@@ -140,6 +142,16 @@ namespace :tufts_data do
 
   end
 
+  def process_rcr(record, collection)
+    if File.file? record.local_path_for 'RCR-CONTENT'
+      source_file = record.local_path_for('RCR-CONTENT')
+      export_file(source_file, collection)
+    else
+      @dpn_logger.error "#{record.class} #{record.pid} missing RCR-CONTENT  datastream file?"
+      @dpn_logger.error "#{record.local_path_for('RCR-CONTENT')}  datastream file?"
+    end
+
+  end
   def process_pdf(record, collection)
     if File.file? record.local_path_for 'Archival.pdf'
       source_file = record.local_path_for('Archival.pdf')

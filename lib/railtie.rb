@@ -32,6 +32,7 @@ module TuftsDataNormalization
       load "tasks/disk_usage.rake"
       load "tasks/dpn_export.rake"
       load "tasks/fedora_4_collections.rake"
+      load "tasks/oai_date_remap.rake"
     end
   end
 end

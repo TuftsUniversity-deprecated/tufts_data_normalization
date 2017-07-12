@@ -3,6 +3,58 @@ require 'active_fedora'
 
 namespace :tufts_data do
 
+  task :dca_date_normalization, [:arg1] => :environment do |t, args|
+    if args[:arg1].nil?
+      puts "YOU MUST SPECIFY FULL PATH TO FILE, ABORTING!"
+      next
+    end
+
+    CSV.foreach(args[:arg1], encoding: "ISO8859-1") do |row|
+      pid = row[0]
+      begin
+        record = TuftsBase.find(pid)
+      rescue ActiveFedora::ObjectNotFoundError
+        puts "ERROR Could not locate object: #{pid}"
+        next
+      end
+      if record.kind_of?(Array)
+        puts "ERROR Multiple results for: #{pid}"
+        next
+      end 
+      puts "#{pid}"
+      record.date= record.date_created unless record.date_created.empty?
+      record.date_created= []
+      record.save!
+    end 
+  end
+
+  task :date_detail_normalization, [:arg1] => :environment do |t, args|
+    if args[:arg1].nil?
+      puts "YOU MUST SPECIFY FULL PATH TO FILE, ABORTING!"
+      next
+    end
+
+    CSV.foreach(args[:arg1], encoding: "ISO8859-1") do |row|
+      pid = row[0]
+      begin
+        record = TuftsBase.find(pid)
+      rescue ActiveFedora::ObjectNotFoundError
+        puts "ERROR Could not locate object: #{pid}"
+        next
+      end
+      if record.kind_of?(Array)
+        puts "ERROR Multiple results for: #{pid}"
+        next
+      end 
+      puts "#{pid}"
+      record.date= record.date_deprecated unless record.date_deprecated.empty?
+      record.isPartOf= record.isPartOf_deprecated unless record.isPartOf_deprecated.empty?
+      record.isPartOf_deprecated= nil unless record.isPartOf_deprecated.empty?
+      record.date_deprecated= nil unless record.date_deprecated.empty?
+      record.save!
+    end 
+  end
+
   task :tisch_data_migration, [:arg1] => :environment do |t, args|
     if args[:arg1].nil?
       puts "YOU MUST SPECIFY FULL PATH TO FILE, ABORTING!"

@@ -2,6 +2,35 @@ require 'csv'
 require 'active_fedora'
 
 namespace :tufts_data do
+  task :publish_existing_objects, [:arg1] => :environment do |t, args|
+    if args[:arg1].nil?
+      puts "YOU MUST SPECIFY FULL PATH TO FILE, ABORTING!"
+      next
+    end
+
+    CSV.foreach(args[:arg1], encoding: "ISO8859-1") do |row|
+      pid = row[0]
+      begin
+        # assumes removal of oai reference record and sample pids
+        # and template objects
+        record = TuftsBase.find(pid)
+        published_pid = pid.gsub("draft:","tufts:")
+        
+        # if the object is not already published, publish it.
+        next unless ActiveFedora::Base.exists?(published_pid)
+      rescue ActiveFedora::ObjectNotFoundError
+        puts "ERROR Could not locate object: #{pid}"
+        next
+      end
+
+      if record.kind_of?(Array)
+        puts "ERROR Multiple results for: #{pid}"
+        next
+      end
+      puts "#{pid}"
+      PublishService.new(record).run
+    end
+  end
 
   task :dca_date_normalization, [:arg1] => :environment do |t, args|
     if args[:arg1].nil?

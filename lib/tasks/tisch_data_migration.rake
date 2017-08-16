@@ -2,6 +2,37 @@ require 'csv'
 require 'active_fedora'
 
 namespace :tufts_data do
+  task :generate_pdf_thumbs, [:arg1] => :environment do |t, args|
+    if args[:arg1].nil?
+      puts "YOU MUST SPECIFY FULL PATH TO FILE, ABORTING!"
+      next
+    end
+
+    CSV.foreach(args[:arg1], encoding: "ISO8859-1") do |row|
+      pid = row[0]
+      begin
+        GC.start(full_mark: true, immediate_sweep: true)
+        puts "Processing #{pid}"
+        record = TuftsBase.find(pid, cast: true)
+        record.create_thumb_backport
+        record.save!  
+      rescue Magick::ImageMagickError
+        puts "ERROR converting: #{pid}"
+        next
+      rescue ActiveFedora::ObjectNotFoundError
+        puts "ERROR Could not locate object: #{pid}"
+        next
+      end
+
+      if record.kind_of?(Array)
+        puts "ERROR Multiple results for: #{pid}"
+        next
+      end
+      #puts "#{pid}"
+      #PublishService.new(record).run
+    end
+  end
+
   task :publish_existing_objects, [:arg1] => :environment do |t, args|
     if args[:arg1].nil?
       puts "YOU MUST SPECIFY FULL PATH TO FILE, ABORTING!"
@@ -14,10 +45,10 @@ namespace :tufts_data do
         # assumes removal of oai reference record and sample pids
         # and template objects
         record = TuftsBase.find(pid)
-        published_pid = pid.gsub("draft:","tufts:")
-        
+      #  published_pid = pid.gsub("draft:","tufts:")
+        record.save!  
         # if the object is not already published, publish it.
-        next unless ActiveFedora::Base.exists?(published_pid)
+      #  next unless ActiveFedora::Base.exists?(published_pid)
       rescue ActiveFedora::ObjectNotFoundError
         puts "ERROR Could not locate object: #{pid}"
         next
@@ -27,8 +58,8 @@ namespace :tufts_data do
         puts "ERROR Multiple results for: #{pid}"
         next
       end
-      puts "#{pid}"
-      PublishService.new(record).run
+      #puts "#{pid}"
+      #PublishService.new(record).run
     end
   end
 

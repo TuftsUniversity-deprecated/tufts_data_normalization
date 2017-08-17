@@ -45,10 +45,10 @@ namespace :tufts_data do
         # assumes removal of oai reference record and sample pids
         # and template objects
         record = TuftsBase.find(pid)
-      #  published_pid = pid.gsub("draft:","tufts:")
-        record.save!  
+        published_pid = pid.gsub("draft:","tufts:")
+      #  record.save!  
         # if the object is not already published, publish it.
-      #  next unless ActiveFedora::Base.exists?(published_pid)
+        next unless ActiveFedora::Base.exists?(published_pid)
       rescue ActiveFedora::ObjectNotFoundError
         puts "ERROR Could not locate object: #{pid}"
         next
@@ -58,8 +58,8 @@ namespace :tufts_data do
         puts "ERROR Multiple results for: #{pid}"
         next
       end
-      #puts "#{pid}"
-      #PublishService.new(record).run
+      puts "#{pid}"
+      PublishService.new(record).run
     end
   end
 

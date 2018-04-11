@@ -105,6 +105,7 @@ namespace :tufts_data do
         dpn_directory = '/tdr/data05/tufts/dpn'
         base_name = 'metadata.xml'
         pid = record.pid
+        pid = pid.gsub(":","_").gsub(".","_")
         dest_folder = "#{dpn_directory}/#{collection}/#{pid}"
         dest = "#{dpn_directory}/#{collection}/#{pid}/#{base_name}"
         FileUtils.mkdir_p(dest_folder) unless File.exist?(dest_folder)
@@ -138,8 +139,10 @@ namespace :tufts_data do
     dpn_directory = '/tdr/data05/tufts/dpn'
     base_name = File.basename uri.path
     pid = record.pid
-    dest_folder = "#{dpn_directory}/#{collection}/#{pid}"
-    dest = "#{dpn_directory}/#{collection}/#{pid}/#{base_name}"
+    pid = pid.gsub(":","_") 
+    pid_folder = pid.gsub(".","_")
+    dest_folder = "#{dpn_directory}/#{collection}/#{pid_folder}"
+    dest = "#{dpn_directory}/#{collection}/#{pid_folder}/#{base_name}"
     #@dpn_logger.info "LINK : #{link}"
     FileUtils.mkdir_p(dest_folder) unless File.exist?(dest_folder)
 
@@ -223,7 +226,9 @@ namespace :tufts_data do
 
   def export_file(file, pid, collection)
     dpn_directory = '/tdr/data05/tufts/dpn'
+    pid = pid.gsub(":","_").gsub(".","_")
     base_name = File.basename file
+    base_name = base_name.gsub(":","_")
     dest = "#{dpn_directory}/#{collection}/#{pid}/#{base_name}"
     copy_with_path(file, dest)
   end
